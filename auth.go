@@ -65,12 +65,12 @@ func (c *Client) login(region string, poolId string, clientId string, username s
 
 		groupsClaim, ok := claims["cognito:groups"]
 		if !ok {
-			return errors.New("Wrong challenge type")
+			return errors.New("No groups claim found")
 		}
 
 		groupsArray, ok := groupsClaim.([]string)
 		if !ok || len(groupsArray) == 0 {
-			return errors.New("Wrong challenge type")
+			return errors.New("Empty groups claim")
 		}
 
 		c.accountId = &groupsArray[0]
