@@ -1,0 +1,225 @@
+schema {
+	query: Query
+	mutation: Mutation
+}
+
+type Query {
+	getCluster(clusterID: ID!): ClusterRedacted
+	listCluster(limit: Int, nextToken: String): ClusterConnection
+
+	getPlatform(platformID: ID!, platformVersion: String!): Platform
+	listPlatform(platformID: ID, limit: Int, nextToken: String): PlatformConnection
+}
+
+type Mutation {
+    createCluster(input: CreateClusterInput!): ClusterRedacted
+	updateCluster(input: UpdateClusterInput!): ClusterRedacted
+	deleteCluster(input: DeleteClusterInput!): ClusterRedacted
+
+	createPrivateCluster(input: CreatePrivateClusterInput!): ClusterRedacted
+	updatePrivateCluster(input: UpdatePrivateClusterInput!): ClusterRedacted
+
+	createPlatformBinding(input: CreatePlatformBindingInput!): PlatformBinding
+	updatePlatformBinding(input: UpdatePlatformBindingInput!): PlatformBinding
+	deletePlatformBinding(input: DeletePlatformBindingInput!): PlatformBinding
+
+	createPlatform(input: CreatePlatformInput!): Platform
+	updatePlatform(input: UpdatePlatformInput!): Platform
+	deletePlatform(input: DeletePlatformInput!): Platform
+
+	createPlatformConfig(input: CreatePlatformConfigInput!): PlatformConfig
+	updatePlatformConfig(input: UpdatePlatformConfigInput!): PlatformConfig
+	deletePlatformConfig(input: DeletePlatformConfigInput!): PlatformConfig
+}
+
+type Platform {
+    platformID: ID!
+	platformVersion: String!
+
+    name: String!
+	description: String
+
+	catalogedDate: String
+
+	accountID: ID
+
+	maxAPIVersion: String!
+	minAPIVersion: String!
+
+	services: [PlatformService!]!
+	configs: [PlatformConfig!]!
+}
+
+type PlatformService {
+    platformID: ID!
+	platformServiceID: ID!
+	
+	platformVersion: String!
+
+    serviceID: ID!
+    serviceVersion: String!
+
+	accountID: ID
+
+    name: String!
+    namespace: String!
+    dependencies: [ID!]!
+    delete_dependencies: [ID!]!
+} 
+
+type PlatformConnection {
+	items: [Platform]
+	nextToken: String
+}
+
+input CreatePlatformInput {
+	platformVersion: String!
+
+    name: String!
+	description: String
+}
+
+input UpdatePlatformInput {
+    name: String
+	description: String
+}
+
+input DeletePlatformInput {
+    platformID: ID!
+	platformVersion: String!
+}
+
+type PlatformConfig {
+    platformID: ID!
+    platformConfigID: ID!
+
+	platformVersion: String!
+
+	name: String!
+    config: String!
+
+	accountID: ID
+}
+
+input CreatePlatformConfigInput {
+    platformID: ID!
+	platformVersion: String!
+
+	name: String!
+    config: String!
+}
+
+input UpdatePlatformConfigInput {
+    platformID: ID!
+    platformConfigID: ID!
+
+	name: String
+    config: String
+}
+
+input DeletePlatformConfigInput {
+	platformID: ID!
+    platformConfigID: ID!
+}
+
+
+type PlatformBinding {
+	platformBindingID: ID!
+
+    platformID: ID!
+    platformVersion: String!
+    platformConfigID: ID!
+
+	status: PlatformBindingStatus!
+}
+
+enum PlatformBindingStatus{
+	Pending,
+	Succeeded,
+	Failed,
+	Error
+}
+
+input CreateClusterInput {
+    name: String!
+    ca: String!
+    token: String!
+    server: String!
+	apiVersion: String!
+	context: String
+}
+
+input UpdateClusterInput {
+	clusterID: ID!
+    name: String
+    ca: String
+    token: String
+    server: String
+	apiVersion: String
+	context: String
+}
+
+input DeleteClusterInput {
+	clusterID: ID!
+}
+
+input CreatePrivateClusterInput {
+    name: String!
+    token: String!
+	privateTunnelToken: String!
+	apiVersion: String!
+	context: String
+}
+
+input UpdatePrivateClusterInput {
+	clusterID: ID!
+    name: String
+    token: String
+	privateTunnelToken: String
+	apiVersion: String
+	context: String
+}
+
+type ClusterRedacted {
+    accountID: ID!
+    clusterID: ID!
+
+    name: String!
+	apiVersion: String!
+
+    ca: String
+    server: String
+
+	privateTunnelToken: String
+
+	context: String
+
+    bindings: [PlatformBinding!]!
+}
+
+type ClusterConnection {
+	items: [ClusterRedacted]
+	nextToken: String
+}
+
+input CreatePlatformBindingInput {
+	clusterID: ID!
+
+    platformID: ID!
+    platformVersion: String!
+    platformConfigID: ID!
+}
+
+input UpdatePlatformBindingInput {
+	clusterID: ID!
+	platformBindingID: ID!
+
+    platformID: ID
+    platformVersion: String
+    platformConfigID: ID
+}
+
+input DeletePlatformBindingInput {
+	clusterID: ID!
+	platformBindingID: ID!
+}

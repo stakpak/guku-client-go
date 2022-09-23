@@ -1,0 +1,255 @@
+query listPlatform {
+    listPlatform {
+        items {
+            accountID
+            catalogedDate
+            description
+            name
+            platformID
+            platformVersion
+            configs {
+                accountID
+                config
+                name
+                platformConfigID
+                platformID
+                platformVersion
+            }
+            services {
+                name
+                serviceID
+            }
+            minAPIVersion
+            maxAPIVersion
+        }
+    }
+}
+
+query getPlatform($platformID: ID!, $platformVersion: String!) {
+    getPlatform(platformID: $platformID, platformVersion: $platformVersion) {
+        accountID
+        catalogedDate
+        description
+        name
+        platformID
+        configs {
+            accountID
+            config
+            name
+            platformConfigID
+            platformID
+            platformVersion
+        }
+        platformVersion
+        services {
+            accountID
+            delete_dependencies
+            dependencies
+            name
+            namespace
+            platformID
+            platformServiceID
+            platformVersion
+            serviceID
+            serviceVersion
+        }
+        minAPIVersion
+        maxAPIVersion
+    }
+}
+
+query listCluster {
+    listCluster {
+        items {
+            accountID
+            ca
+            clusterID
+            name
+            server
+            privateTunnelToken
+            apiVersion
+            context
+            bindings {
+                platformBindingID
+                platformConfigID
+                platformID
+                platformVersion
+            }
+        }
+    }
+}
+
+query getCluster($id: ID!) {
+    getCluster(clusterID: $id) {
+        accountID
+        ca
+        clusterID
+        name
+        server
+        privateTunnelToken
+        apiVersion
+        context
+        bindings {
+            platformBindingID
+            platformConfigID
+            platformID
+            platformVersion
+            status
+        }
+    }
+}
+
+mutation createPlatformConfig(
+$config: String!
+$name: String!
+$platformID: ID!
+$platformVersion: String!
+) {
+createPlatformConfig(
+    input: {
+    config: $config
+    name: $name
+    platformID: $platformID
+    platformVersion: $platformVersion
+    }
+) {
+    platformConfigID
+}
+}
+
+
+mutation deletePlatformConfig($platformID: ID!, $platformConfigID: ID!) {
+deletePlatformConfig(
+    input: { platformConfigID: $platformConfigID, platformID: $platformID }
+) {
+    platformConfigID
+}
+}
+
+mutation createCluster(
+$name: String!
+$server: String!
+$ca: String!
+$token: String!
+$apiVersion: String!
+$context: String!
+) {
+createCluster(
+    input: { name: $name, server: $server, ca: $ca, token: $token, apiVersion: $apiVersion, context: $context }
+) {
+    clusterID
+}
+}
+
+
+mutation createPrivateCluster(
+$name: String!
+$token: String!
+$privateTunnelToken: String!
+$apiVersion: String!
+$context: String!
+) {
+createPrivateCluster(
+    input: { name: $name, token: $token, privateTunnelToken: $privateTunnelToken, apiVersion: $apiVersion, context: $context }
+) {
+    clusterID
+}
+}
+
+mutation deleteCluster($id: ID!) {
+deleteCluster(input: { clusterID: $id }) {
+    clusterID
+}
+}
+
+mutation updateCluster(
+$id: ID!
+$name: String
+$server: String
+$ca: String
+$token: String
+$apiVersion: String
+$context: String
+) {
+updateCluster(
+    input: {
+    clusterID: $id
+    name: $name
+    server: $server
+    ca: $ca
+    token: $token
+    apiVersion: $apiVersion
+    context: $context
+    }
+) {
+    clusterID
+}
+}
+
+
+mutation updatePrivateCluster(
+$id: ID!
+$name: String
+$token: String
+$privateTunnelToken: String
+$apiVersion: String
+$context: String
+) {
+updatePrivateCluster(
+    input: {
+    clusterID: $id
+    name: $name
+    token: $token
+    privateTunnelToken: $privateTunnelToken
+    apiVersion: $apiVersion
+    context: $context
+    }
+) {
+    clusterID
+}
+}
+
+mutation createPlatformBinding(
+$platformVersion: String!
+$platformID: ID!
+$platformConfigID: ID!
+$clusterID: ID!
+) {
+createPlatformBinding(
+    input: {
+    platformVersion: $platformVersion
+    platformID: $platformID
+    platformConfigID: $platformConfigID
+    clusterID: $clusterID
+    }
+) {
+    platformBindingID
+    platformConfigID
+}
+}
+
+mutation deletePlatformBinding($clusterID: ID!, $platformBindingID: ID!) {
+deletePlatformBinding(
+    input: { clusterID: $clusterID, platformBindingID: $platformBindingID }
+) {
+    platformID
+}
+}
+
+mutation updatePlatformBinding(
+$clusterID: ID!
+$platformBindingID: ID!
+$platformConfigID: ID
+$platformVersion: String
+) {
+updatePlatformBinding(
+    input: {
+    clusterID: $clusterID
+    platformBindingID: $platformBindingID
+    platformConfigID: $platformConfigID
+    platformVersion: $platformVersion
+    }
+) {
+    platformID
+}
+}
