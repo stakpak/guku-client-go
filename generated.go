@@ -920,7 +920,7 @@ func createCluster(
 	req := &graphql.Request{
 		OpName: "createCluster",
 		Query: `
-mutation createCluster ($name: String!, $server: String!, $ca: String!, $token: String!, $apiVersion: String!, $context: String!) {
+mutation createCluster ($name: String!, $server: String!, $ca: String!, $token: String!, $apiVersion: String!, $context: AWSJSON!) {
 	createCluster(input: {name:$name,server:$server,ca:$ca,token:$token,apiVersion:$apiVersion,context:$context}) {
 		clusterID
 	}
@@ -999,7 +999,7 @@ func createPlatformConfig(
 	req := &graphql.Request{
 		OpName: "createPlatformConfig",
 		Query: `
-mutation createPlatformConfig ($config: String!, $name: String!, $platformID: ID!, $platformVersion: String!) {
+mutation createPlatformConfig ($config: AWSJSON!, $name: String!, $platformID: ID!, $platformVersion: String!) {
 	createPlatformConfig(input: {config:$config,name:$name,platformID:$platformID,platformVersion:$platformVersion}) {
 		platformConfigID
 	}
@@ -1038,7 +1038,7 @@ func createPrivateCluster(
 	req := &graphql.Request{
 		OpName: "createPrivateCluster",
 		Query: `
-mutation createPrivateCluster ($name: String!, $token: String!, $privateTunnelToken: String!, $apiVersion: String!, $context: String!) {
+mutation createPrivateCluster ($name: String!, $token: String!, $privateTunnelToken: String!, $apiVersion: String!, $context: AWSJSON!) {
 	createPrivateCluster(input: {name:$name,token:$token,privateTunnelToken:$privateTunnelToken,apiVersion:$apiVersion,context:$context}) {
 		clusterID
 	}
@@ -1379,7 +1379,7 @@ func updateCluster(
 	req := &graphql.Request{
 		OpName: "updateCluster",
 		Query: `
-mutation updateCluster ($id: ID!, $name: String, $server: String, $ca: String, $token: String, $apiVersion: String, $context: String) {
+mutation updateCluster ($id: ID!, $name: String, $server: String, $ca: String, $token: String, $apiVersion: String, $context: AWSJSON) {
 	updateCluster(input: {clusterID:$id,name:$name,server:$server,ca:$ca,token:$token,apiVersion:$apiVersion,context:$context}) {
 		clusterID
 	}
@@ -1460,7 +1460,7 @@ func updatePrivateCluster(
 	req := &graphql.Request{
 		OpName: "updatePrivateCluster",
 		Query: `
-mutation updatePrivateCluster ($id: ID!, $name: String, $token: String, $privateTunnelToken: String, $apiVersion: String, $context: String) {
+mutation updatePrivateCluster ($id: ID!, $name: String, $token: String, $privateTunnelToken: String, $apiVersion: String, $context: AWSJSON) {
 	updatePrivateCluster(input: {clusterID:$id,name:$name,token:$token,privateTunnelToken:$privateTunnelToken,apiVersion:$apiVersion,context:$context}) {
 		clusterID
 	}

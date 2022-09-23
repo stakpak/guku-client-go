@@ -16,8 +16,25 @@ type Client struct {
 	refreshToken  *string
 }
 
+type Transport struct {
+	underlyingTransport http.RoundTripper
+	token               string
+}
+
+func (t *Transport) RoundTrip(req *http.Request) (*http.Response, error) {
+	req.Header.Add("authorization", t.token)
+	return t.underlyingTransport.RoundTrip(req)
+}
+
 func (c *Client) addGraphqlClient(url string) {
-	client := graphql.NewClient(url, http.DefaultClient)
+	httpClient := &http.Client{
+		Transport: &Transport{
+			underlyingTransport: http.DefaultTransport,
+			token:               *c.idToken,
+		},
+	}
+
+	client := graphql.NewClient(url, httpClient)
 	c.graphqlClient = &client
 }
 

@@ -100,7 +100,7 @@ query getCluster($id: ID!) {
 }
 
 mutation createPlatformConfig(
-$config: String!
+$config: AWSJSON!
 $name: String!
 $platformID: ID!
 $platformVersion: String!
@@ -132,7 +132,7 @@ $server: String!
 $ca: String!
 $token: String!
 $apiVersion: String!
-$context: String!
+$context: AWSJSON!
 ) {
 createCluster(
     input: { name: $name, server: $server, ca: $ca, token: $token, apiVersion: $apiVersion, context: $context }
@@ -147,7 +147,7 @@ $name: String!
 $token: String!
 $privateTunnelToken: String!
 $apiVersion: String!
-$context: String!
+$context: AWSJSON!
 ) {
 createPrivateCluster(
     input: { name: $name, token: $token, privateTunnelToken: $privateTunnelToken, apiVersion: $apiVersion, context: $context }
@@ -169,7 +169,7 @@ $server: String
 $ca: String
 $token: String
 $apiVersion: String
-$context: String
+$context: AWSJSON
 ) {
 updateCluster(
     input: {
@@ -193,7 +193,7 @@ $name: String
 $token: String
 $privateTunnelToken: String
 $apiVersion: String
-$context: String
+$context: AWSJSON
 ) {
 updatePrivateCluster(
     input: {

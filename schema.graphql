@@ -3,6 +3,8 @@ schema {
 	mutation: Mutation
 }
 
+scalar AWSJSON
+
 type Query {
 	getCluster(clusterID: ID!): ClusterRedacted
 	listCluster(limit: Int, nextToken: String): ClusterConnection
@@ -96,7 +98,7 @@ type PlatformConfig {
 	platformVersion: String!
 
 	name: String!
-    config: String!
+    config: AWSJSON!
 
 	accountID: ID
 }
@@ -106,7 +108,7 @@ input CreatePlatformConfigInput {
 	platformVersion: String!
 
 	name: String!
-    config: String!
+    config: AWSJSON!
 }
 
 input UpdatePlatformConfigInput {
@@ -114,7 +116,7 @@ input UpdatePlatformConfigInput {
     platformConfigID: ID!
 
 	name: String
-    config: String
+    config: AWSJSON
 }
 
 input DeletePlatformConfigInput {
@@ -146,7 +148,7 @@ input CreateClusterInput {
     token: String!
     server: String!
 	apiVersion: String!
-	context: String
+	context: AWSJSON
 }
 
 input UpdateClusterInput {
@@ -156,7 +158,7 @@ input UpdateClusterInput {
     token: String
     server: String
 	apiVersion: String
-	context: String
+	context: AWSJSON
 }
 
 input DeleteClusterInput {
@@ -168,7 +170,7 @@ input CreatePrivateClusterInput {
     token: String!
 	privateTunnelToken: String!
 	apiVersion: String!
-	context: String
+	context: AWSJSON
 }
 
 input UpdatePrivateClusterInput {
@@ -177,7 +179,7 @@ input UpdatePrivateClusterInput {
     token: String
 	privateTunnelToken: String
 	apiVersion: String
-	context: String
+	context: AWSJSON
 }
 
 type ClusterRedacted {
@@ -192,7 +194,7 @@ type ClusterRedacted {
 
 	privateTunnelToken: String
 
-	context: String
+	context: AWSJSON
 
     bindings: [PlatformBinding!]!
 }

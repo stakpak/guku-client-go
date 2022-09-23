@@ -5,3 +5,10 @@ operations:
 generated: generated.go
 package: guku
 optional: pointer
+bindings:
+  AWSTimestamp:
+    type: string
+  AWSDateTime:
+    type: string
+  AWSJSON:
+    type: string
