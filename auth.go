@@ -69,12 +69,23 @@ func (c *Client) login(region string, poolId string, clientId string, username s
 			return errors.New("No groups claim found")
 		}
 
-		groupsArray, ok := groupsClaim.([]string)
-		if !ok || len(groupsArray) == 0 {
+		groupsArray, ok := groupsClaim.([]interface{})
+
+		if !ok {
+			return errors.New("Invalid groups claim")
+		}
+
+		if len(groupsArray) == 0 {
 			return errors.New("Empty groups claim")
 		}
 
-		c.accountId = &groupsArray[0]
+		group, ok := groupsArray[0].(string)
+
+		if !ok {
+			return errors.New("Invalid group value")
+		}
+
+		c.accountId = &group
 		c.accessToken = result.AccessToken
 		c.idToken = result.IdToken
 		c.refreshToken = result.RefreshToken
