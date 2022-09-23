@@ -3,6 +3,7 @@ package guku
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	cognitosrp "github.com/alexrudd/cognito-srp/v4"
@@ -80,5 +81,5 @@ func (c *Client) login(region string, poolId string, clientId string, username s
 		return nil
 	}
 
-	return errors.New("Wrong challenge type")
+	return errors.New(fmt.Sprintf("Unexpected challenge type %s", resp.ChallengeName))
 }
