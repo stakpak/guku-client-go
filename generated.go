@@ -925,11 +925,25 @@ func (v *updatePlatformBindingResponse) GetUpdatePlatformBinding() *updatePlatfo
 
 // updatePlatformBindingUpdatePlatformBinding includes the requested fields of the GraphQL type PlatformBinding.
 type updatePlatformBindingUpdatePlatformBinding struct {
-	PlatformID string `json:"platformID"`
+	Status           PlatformBindingStatus `json:"status"`
+	PlatformConfigID string                `json:"platformConfigID"`
+	PlatformVersion  string                `json:"platformVersion"`
 }
 
-// GetPlatformID returns updatePlatformBindingUpdatePlatformBinding.PlatformID, and is useful for accessing the field via an interface.
-func (v *updatePlatformBindingUpdatePlatformBinding) GetPlatformID() string { return v.PlatformID }
+// GetStatus returns updatePlatformBindingUpdatePlatformBinding.Status, and is useful for accessing the field via an interface.
+func (v *updatePlatformBindingUpdatePlatformBinding) GetStatus() PlatformBindingStatus {
+	return v.Status
+}
+
+// GetPlatformConfigID returns updatePlatformBindingUpdatePlatformBinding.PlatformConfigID, and is useful for accessing the field via an interface.
+func (v *updatePlatformBindingUpdatePlatformBinding) GetPlatformConfigID() string {
+	return v.PlatformConfigID
+}
+
+// GetPlatformVersion returns updatePlatformBindingUpdatePlatformBinding.PlatformVersion, and is useful for accessing the field via an interface.
+func (v *updatePlatformBindingUpdatePlatformBinding) GetPlatformVersion() string {
+	return v.PlatformVersion
+}
 
 // updatePrivateClusterResponse is returned by updatePrivateCluster on success.
 type updatePrivateClusterResponse struct {
@@ -1503,7 +1517,9 @@ func updatePlatformBinding(
 		Query: `
 mutation updatePlatformBinding ($clusterID: ID!, $platformBindingID: ID!, $platformConfigID: ID, $platformVersion: String) {
 	updatePlatformBinding(input: {clusterID:$clusterID,platformBindingID:$platformBindingID,platformConfigID:$platformConfigID,platformVersion:$platformVersion}) {
-		platformID
+		status
+		platformConfigID
+		platformVersion
 	}
 }
 `,

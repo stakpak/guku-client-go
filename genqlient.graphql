@@ -259,6 +259,8 @@ updatePlatformBinding(
     platformVersion: $platformVersion
     }
 ) {
-    platformID
+    status
+    platformConfigID
+    platformVersion
 }
 }
