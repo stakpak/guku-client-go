@@ -97,10 +97,42 @@ func (c *Client) DeleteCluster(id string) (*ClusterDelete, error) {
 	return getResponse.GetDeleteCluster(), nil
 }
 
-func (c *Client) GetPlatfom(platformID string, platformVersion string) (*Platform, error) {
+func (c *Client) GetPlatform(platformID string, platformVersion string) (*Platform, error) {
 	getResponse, err := getPlatform(c.ctx, *c.graphqlClient, platformID, platformVersion)
 	if err != nil {
 		return nil, err
 	}
 	return getResponse.GetGetPlatform(), nil
+}
+
+func (c *Client) GetPlatformBinding(clusterID string, platformBindingID string) (*PlatformBindingGet, error) {
+	getResponse, err := getPlatformBinding(c.ctx, *c.graphqlClient, clusterID, platformBindingID)
+	if err != nil {
+		return nil, err
+	}
+	return getResponse.GetGetPlatformBinding(), nil
+}
+
+func (c *Client) CreatePlatformBinding(clusterID string, platformID string, platformVersion string, platformConfigID string) (*PlatformBindingCreate, error) {
+	getResponse, err := createPlatformBinding(c.ctx, *c.graphqlClient, platformVersion, platformID, platformConfigID, clusterID)
+	if err != nil {
+		return nil, err
+	}
+	return (*PlatformBindingCreate)(getResponse.GetCreatePlatformBinding()), nil
+}
+
+func (c *Client) UpdatePlatformBinding(clusterID string, platformBindingID string, platformConfigID *string, platformVersion *string) (*PlatformBindingUpdate, error) {
+	getResponse, err := updatePlatformBinding(c.ctx, *c.graphqlClient, clusterID, platformBindingID, platformConfigID, platformVersion)
+	if err != nil {
+		return nil, err
+	}
+	return getResponse.GetUpdatePlatformBinding(), nil
+}
+
+func (c *Client) DeletePlatformBinding(clusterID string, platformBindingID string) (*PlatformBindingDelete, error) {
+	getResponse, err := deletePlatformBinding(c.ctx, *c.graphqlClient, clusterID, platformBindingID)
+	if err != nil {
+		return nil, err
+	}
+	return getResponse.GetDeletePlatformBinding(), nil
 }

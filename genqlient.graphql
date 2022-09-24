@@ -99,6 +99,15 @@ query getCluster($id: ID!) {
     }
 }
 
+query getPlatformBinding($clusterID: ID!, $platformBindingID: ID!) {
+    getPlatformBinding(clusterID: $clusterID, platformBindingID: $platformBindingID) {
+        platformConfigID
+        platformID
+        platformVersion
+        status
+    }
+}
+
 mutation createPlatformConfig(
 $config: AWSJSON!
 $name: String!

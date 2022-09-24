@@ -149,6 +149,18 @@ type __getClusterInput struct {
 // GetId returns __getClusterInput.Id, and is useful for accessing the field via an interface.
 func (v *__getClusterInput) GetId() string { return v.Id }
 
+// __getPlatformBindingInput is used internally by genqlient
+type __getPlatformBindingInput struct {
+	ClusterID         string `json:"clusterID"`
+	PlatformBindingID string `json:"platformBindingID"`
+}
+
+// GetClusterID returns __getPlatformBindingInput.ClusterID, and is useful for accessing the field via an interface.
+func (v *__getPlatformBindingInput) GetClusterID() string { return v.ClusterID }
+
+// GetPlatformBindingID returns __getPlatformBindingInput.PlatformBindingID, and is useful for accessing the field via an interface.
+func (v *__getPlatformBindingInput) GetPlatformBindingID() string { return v.PlatformBindingID }
+
 // __getPlatformInput is used internally by genqlient
 type __getPlatformInput struct {
 	PlatformID      string `json:"platformID"`
@@ -467,6 +479,38 @@ type getClusterResponse struct {
 // GetGetCluster returns getClusterResponse.GetCluster, and is useful for accessing the field via an interface.
 func (v *getClusterResponse) GetGetCluster() *getClusterGetClusterClusterRedacted {
 	return v.GetCluster
+}
+
+// getPlatformBindingGetPlatformBinding includes the requested fields of the GraphQL type PlatformBinding.
+type getPlatformBindingGetPlatformBinding struct {
+	PlatformConfigID string                `json:"platformConfigID"`
+	PlatformID       string                `json:"platformID"`
+	PlatformVersion  string                `json:"platformVersion"`
+	Status           PlatformBindingStatus `json:"status"`
+}
+
+// GetPlatformConfigID returns getPlatformBindingGetPlatformBinding.PlatformConfigID, and is useful for accessing the field via an interface.
+func (v *getPlatformBindingGetPlatformBinding) GetPlatformConfigID() string {
+	return v.PlatformConfigID
+}
+
+// GetPlatformID returns getPlatformBindingGetPlatformBinding.PlatformID, and is useful for accessing the field via an interface.
+func (v *getPlatformBindingGetPlatformBinding) GetPlatformID() string { return v.PlatformID }
+
+// GetPlatformVersion returns getPlatformBindingGetPlatformBinding.PlatformVersion, and is useful for accessing the field via an interface.
+func (v *getPlatformBindingGetPlatformBinding) GetPlatformVersion() string { return v.PlatformVersion }
+
+// GetStatus returns getPlatformBindingGetPlatformBinding.Status, and is useful for accessing the field via an interface.
+func (v *getPlatformBindingGetPlatformBinding) GetStatus() PlatformBindingStatus { return v.Status }
+
+// getPlatformBindingResponse is returned by getPlatformBinding on success.
+type getPlatformBindingResponse struct {
+	GetPlatformBinding *getPlatformBindingGetPlatformBinding `json:"getPlatformBinding"`
+}
+
+// GetGetPlatformBinding returns getPlatformBindingResponse.GetPlatformBinding, and is useful for accessing the field via an interface.
+func (v *getPlatformBindingResponse) GetGetPlatformBinding() *getPlatformBindingGetPlatformBinding {
+	return v.GetPlatformBinding
 }
 
 // getPlatformGetPlatform includes the requested fields of the GraphQL type Platform.
@@ -1262,6 +1306,43 @@ query getPlatform ($platformID: ID!, $platformVersion: String!) {
 	var err error
 
 	var data getPlatformResponse
+	resp := &graphql.Response{Data: &data}
+
+	err = client.MakeRequest(
+		ctx,
+		req,
+		resp,
+	)
+
+	return &data, err
+}
+
+func getPlatformBinding(
+	ctx context.Context,
+	client graphql.Client,
+	clusterID string,
+	platformBindingID string,
+) (*getPlatformBindingResponse, error) {
+	req := &graphql.Request{
+		OpName: "getPlatformBinding",
+		Query: `
+query getPlatformBinding ($clusterID: ID!, $platformBindingID: ID!) {
+	getPlatformBinding(clusterID: $clusterID, platformBindingID: $platformBindingID) {
+		platformConfigID
+		platformID
+		platformVersion
+		status
+	}
+}
+`,
+		Variables: &__getPlatformBindingInput{
+			ClusterID:         clusterID,
+			PlatformBindingID: platformBindingID,
+		},
+	}
+	var err error
+
+	var data getPlatformBindingResponse
 	resp := &graphql.Response{Data: &data}
 
 	err = client.MakeRequest(

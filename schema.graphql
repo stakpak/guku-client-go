@@ -1,19 +1,28 @@
+# GraphQL
 schema {
 	query: Query
 	mutation: Mutation
 }
 
 scalar AWSJSON
+scalar AWSDate
 
 type Query {
 	getCluster(clusterID: ID!): ClusterRedacted
 	listCluster(limit: Int, nextToken: String): ClusterConnection
+	
+	getService(serviceID: ID!, serviceVersion: String!): Service
+	listService(serviceID: ID, limit: Int, nextToken: String): ServiceConnection
 
 	getPlatform(platformID: ID!, platformVersion: String!): Platform
 	listPlatform(platformID: ID, limit: Int, nextToken: String): PlatformConnection
+
+	getPlatformBinding(clusterID: ID!, platformBindingID: ID!): PlatformBinding
 }
 
 type Mutation {
+    createAccount: Account
+
     createCluster(input: CreateClusterInput!): ClusterRedacted
 	updateCluster(input: UpdateClusterInput!): ClusterRedacted
 	deleteCluster(input: DeleteClusterInput!): ClusterRedacted
@@ -25,25 +34,80 @@ type Mutation {
 	updatePlatformBinding(input: UpdatePlatformBindingInput!): PlatformBinding
 	deletePlatformBinding(input: DeletePlatformBindingInput!): PlatformBinding
 
+	createService(input: CreateServiceInput!): Service
+	updateService(input: UpdateServiceInput!): Service
+	deleteService(input: DeleteServiceInput!): Service
+
 	createPlatform(input: CreatePlatformInput!): Platform
 	updatePlatform(input: UpdatePlatformInput!): Platform
 	deletePlatform(input: DeletePlatformInput!): Platform
+
+	createPlatformService(input: CreatePlatformServiceInput!): PlatformService
+	updatePlatformService(input: UpdatePlatformServiceInput!): PlatformService
+	deletePlatformService(input: DeletePlatformServiceInput!): PlatformService
 
 	createPlatformConfig(input: CreatePlatformConfigInput!): PlatformConfig
 	updatePlatformConfig(input: UpdatePlatformConfigInput!): PlatformConfig
 	deletePlatformConfig(input: DeletePlatformConfigInput!): PlatformConfig
 }
 
-type Platform {
-    platformID: ID!
-	platformVersion: String!
+
+# Account
+type Account {
+    accountID: ID!
+}
+
+# Service
+type Service {
+    serviceID: ID! # partition key
+	serviceVersion: String! # sort key
 
     name: String!
 	description: String
 
-	catalogedDate: String
+	catalogedDate: AWSDate # global sparse index (only exists if is not owned by an account)
 
-	accountID: ID
+    accountID: ID # only exists if owned by an account
+}
+# Service Operations
+input CreateServiceInput {
+	serviceID: ID
+	serviceVersion: String!
+
+	name: String!
+	description: String
+}
+
+input UpdateServiceInput {
+	serviceID: ID!
+	serviceVersion: String!
+
+	name: String
+	description: String
+}
+
+input DeleteServiceInput {
+	serviceID: ID!
+	serviceVersion: String!
+}
+
+type ServiceConnection {
+	items: [Service]
+	nextToken: String
+}
+
+
+# Platform
+type Platform {
+    platformID: ID! # partition key
+	platformVersion: String! # sort key
+
+    name: String!
+	description: String
+
+	catalogedDate: AWSDate # global sparse index (only exists if is not owned by an account)
+
+	accountID: ID # only exists if owned by an account
 
 	maxAPIVersion: String!
 	minAPIVersion: String!
@@ -53,22 +117,22 @@ type Platform {
 }
 
 type PlatformService {
-    platformID: ID!
-	platformServiceID: ID!
+    platformID: ID! # partition key
+	platformServiceID: ID! # sort key
 	
-	platformVersion: String!
+	platformVersion: String! # LSI
 
     serviceID: ID!
     serviceVersion: String!
 
-	accountID: ID
+	accountID: ID # only exists if owned by an account
 
     name: String!
     namespace: String!
-    dependencies: [ID!]!
-    delete_dependencies: [ID!]!
+    dependencies: [ID!]! # contains platformServiceIDs
+    delete_dependencies: [ID!]! # contains platformServiceIDs
 } 
-
+# Platform Operations
 type PlatformConnection {
 	items: [Platform]
 	nextToken: String
@@ -80,29 +144,60 @@ input CreatePlatformInput {
     name: String!
 	description: String
 }
-
 input UpdatePlatformInput {
     name: String
 	description: String
 }
-
 input DeletePlatformInput {
     platformID: ID!
 	platformVersion: String!
 }
 
-type PlatformConfig {
+input CreatePlatformServiceInput {
     platformID: ID!
-    platformConfigID: ID!
-
 	platformVersion: String!
+
+    serviceID: ID!
+    serviceVersion: String!
+
+    name: String!
+    namespace: String!
+    dependencies: [ID!]!
+    delete_dependencies: [ID!]!
+}
+input UpdatePlatformServiceInput {
+    platformID: ID!
+	platformServiceID: ID!
+
+    serviceID: ID
+    serviceVersion: String
+
+    name: String
+    namespace: String
+    dependencies: [ID!]!
+    delete_dependencies: [ID!]!
+}
+input DeletePlatformServiceInput {
+    platformID: ID!
+	platformServiceID: ID!
+}
+
+
+
+
+# PlatformConfig
+type PlatformConfig {
+    platformID: ID! # partition key
+    platformConfigID: ID! # sort key
+
+	platformVersion: String! # LSI
 
 	name: String!
     config: AWSJSON!
 
-	accountID: ID
+	accountID: ID # only exists if owned by an account
 }
-
+# PLatformConfig Operations
 input CreatePlatformConfigInput {
     platformID: ID!
 	platformVersion: String!
@@ -110,7 +205,6 @@ input CreatePlatformConfigInput {
 	name: String!
     config: AWSJSON!
 }
-
 input UpdatePlatformConfigInput {
     platformID: ID!
     platformConfigID: ID!
@@ -118,15 +212,33 @@ input UpdatePlatformConfigInput {
 	name: String
     config: AWSJSON
 }
-
 input DeletePlatformConfigInput {
 	platformID: ID!
     platformConfigID: ID!
 }
 
 
+# Cluster
+type Cluster {
+    accountID: ID! # partition key
+    clusterID: ID! # sort key
+
+    name: String!
+    token: String!
+	
+	ca: String
+    server: String
+
+	privateTunnelToken: String
+
+    bindings: [PlatformBinding!]!
+}
+
 type PlatformBinding {
-	platformBindingID: ID!
+    # clusterID: ID! # partition key
+	platformBindingID: ID! # sort key
+
+	# accountID: ID!
 
     platformID: ID!
     platformVersion: String!
@@ -141,7 +253,7 @@ enum PlatformBindingStatus{
 	Failed,
 	Error
 }
-
+# Cluster Operations
 input CreateClusterInput {
     name: String!
     ca: String!
@@ -150,7 +262,6 @@ input CreateClusterInput {
 	apiVersion: String!
 	context: AWSJSON
 }
-
 input UpdateClusterInput {
 	clusterID: ID!
     name: String
@@ -160,7 +271,6 @@ input UpdateClusterInput {
 	apiVersion: String
 	context: AWSJSON
 }
-
 input DeleteClusterInput {
 	clusterID: ID!
 }
@@ -172,7 +282,6 @@ input CreatePrivateClusterInput {
 	apiVersion: String!
 	context: AWSJSON
 }
-
 input UpdatePrivateClusterInput {
 	clusterID: ID!
     name: String
@@ -198,7 +307,6 @@ type ClusterRedacted {
 
     bindings: [PlatformBinding!]!
 }
-
 type ClusterConnection {
 	items: [ClusterRedacted]
 	nextToken: String
@@ -211,7 +319,6 @@ input CreatePlatformBindingInput {
     platformVersion: String!
     platformConfigID: ID!
 }
-
 input UpdatePlatformBindingInput {
 	clusterID: ID!
 	platformBindingID: ID!
@@ -220,8 +327,66 @@ input UpdatePlatformBindingInput {
     platformVersion: String
     platformConfigID: ID
 }
-
 input DeletePlatformBindingInput {
 	clusterID: ID!
 	platformBindingID: ID!
+}
+
+
+
+# Filters
+input TableBooleanFilterInput {
+	ne: Boolean
+	eq: Boolean
+}
+
+input TableFloatFilterInput {
+	ne: Float
+	eq: Float
+	le: Float
+	lt: Float
+	ge: Float
+	gt: Float
+	contains: Float
+	notContains: Float
+	between: [Float]
+}
+
+input TableIDFilterInput {
+	ne: ID
+	eq: ID
+	le: ID
+	lt: ID
+	ge: ID
+	gt: ID
+	contains: ID
+	notContains: ID
+	between: [ID]
+	beginsWith: ID
+}
+
+input TableIntFilterInput {
+	ne: Int
+	eq: Int
+	le: Int
+	lt: Int
+	ge: Int
+	gt: Int
+	contains: Int
+	notContains: Int
+	between: [Int]
+}
+
+
+input TableStringFilterInput {
+	ne: String
+	eq: String
+	le: String
+	lt: String
+	ge: String
+	gt: String
+	contains: String
+	notContains: String
+	between: [String]
+	beginsWith: String
 }

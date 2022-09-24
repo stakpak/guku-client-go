@@ -9,3 +9,8 @@ type PlatformService = getPlatformGetPlatformServicesPlatformService
 type ClusterCreate = createClusterCreateClusterClusterRedacted
 type ClusterUpdate = updateClusterUpdateClusterClusterRedacted
 type ClusterDelete = deleteClusterDeleteClusterClusterRedacted
+
+type PlatformBindingGet = getPlatformBindingGetPlatformBinding
+type PlatformBindingCreate = createPlatformBindingCreatePlatformBinding
+type PlatformBindingUpdate = updatePlatformBindingUpdatePlatformBinding
+type PlatformBindingDelete = deletePlatformBindingDeletePlatformBinding

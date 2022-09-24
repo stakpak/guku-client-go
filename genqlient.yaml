@@ -10,5 +10,7 @@ bindings:
     type: string
   AWSDateTime:
     type: string
+  AWSDate:
+    type: string
   AWSJSON:
     type: string
