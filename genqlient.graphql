@@ -233,7 +233,7 @@ createPlatformBinding(
     }
 ) {
     platformBindingID
-    platformConfigID
+    status
 }
 }
 

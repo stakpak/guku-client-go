@@ -273,8 +273,8 @@ func (v *createClusterResponse) GetCreateCluster() *createClusterCreateClusterCl
 
 // createPlatformBindingCreatePlatformBinding includes the requested fields of the GraphQL type PlatformBinding.
 type createPlatformBindingCreatePlatformBinding struct {
-	PlatformBindingID string `json:"platformBindingID"`
-	PlatformConfigID  string `json:"platformConfigID"`
+	PlatformBindingID string                `json:"platformBindingID"`
+	Status            PlatformBindingStatus `json:"status"`
 }
 
 // GetPlatformBindingID returns createPlatformBindingCreatePlatformBinding.PlatformBindingID, and is useful for accessing the field via an interface.
@@ -282,9 +282,9 @@ func (v *createPlatformBindingCreatePlatformBinding) GetPlatformBindingID() stri
 	return v.PlatformBindingID
 }
 
-// GetPlatformConfigID returns createPlatformBindingCreatePlatformBinding.PlatformConfigID, and is useful for accessing the field via an interface.
-func (v *createPlatformBindingCreatePlatformBinding) GetPlatformConfigID() string {
-	return v.PlatformConfigID
+// GetStatus returns createPlatformBindingCreatePlatformBinding.Status, and is useful for accessing the field via an interface.
+func (v *createPlatformBindingCreatePlatformBinding) GetStatus() PlatformBindingStatus {
+	return v.Status
 }
 
 // createPlatformBindingResponse is returned by createPlatformBinding on success.
@@ -1007,7 +1007,7 @@ func createPlatformBinding(
 mutation createPlatformBinding ($platformVersion: String!, $platformID: ID!, $platformConfigID: ID!, $clusterID: ID!) {
 	createPlatformBinding(input: {platformVersion:$platformVersion,platformID:$platformID,platformConfigID:$platformConfigID,clusterID:$clusterID}) {
 		platformBindingID
-		platformConfigID
+		status
 	}
 }
 `,
